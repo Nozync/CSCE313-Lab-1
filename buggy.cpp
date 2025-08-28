@@ -19,6 +19,7 @@ class Shape {
     }
 
     ~Shape () {
+        //destructor for points
         for (int i = 0; i < vertices; i++) {
             delete points[i];
         }
@@ -94,6 +95,7 @@ int main () {
     std::cout << "Area of tri: " << tri->area() << std::endl;
     std::cout << "Area of quad: " << quad->area() << std::endl;
 
+    //avoid memory leaks by deleting the created arrays
     delete tri;
     delete quad;
 }
