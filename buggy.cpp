@@ -13,37 +13,38 @@ class Shape {
     Point** points;
 
     public:
-        Shape (int _vertices) {
-            vertices = _vertices;
-            points = new Point*[vertices+1];
+    Shape (int _vertices) {
+        vertices = _vertices;
+        points = new Point*[vertices];
+    }
+
+    ~Shape () {
+        for (int i = 0; i < vertices; i++) {
+            delete points[i];
         }
+        delete[] points;
+    }
 
-        ~Shape () {
-            for (int i = 0; i <= vertices; i++) {
-                delete points[i];
-            }
-            delete[] points;
+    void addPoints (Point pts[]/* formal parameter for unsized array called pts */) {
+        for (int i = 0; i < vertices; i++) {
+            points[i] = new Point;  //allocate memory first
+            memcpy(points[i], &pts[i%vertices], sizeof(Point)); 
         }
+    }
 
-        void addPoints (Point pts[]/* formal parameter for unsized array called pts */) {
-            for (int i = 0; i <= vertices; i++) {
-                memcpy(points[i], &pts[i%vertices], sizeof(Point));
-            }
+    double area () {
+        int temp = 0;
+        for (int i = 0; i < vertices; i++) {
+            // FIXME: there are two methods to access members of pointers
+            //        use one to fix lhs and the other to fix rhs
+
+            //used arrow operator which is a shorthand version of the rhs method encapsulating the pointer and thenr accessing the data
+            int lhs = points[i]->x * points[(i+1)%vertices]->y;
+            int rhs = (*points[(i+1)%vertices]).x * (*points[i]).y;
+            temp += (lhs - rhs);
         }
-
-        double* area () {
-            int temp = 0;
-            for (int i = 0; i <= vertices; i++) {
-                // FIXME: there are two methods to access members of pointers
-                //        use one to fix lhs and the other to fix rhs
-
-                //used arrow operator which is a shorthand version of the rhs method encapsulating the pointer and thenr accessing the data
-                int lhs = points[i]->x * points[i+1]->y;
-                int rhs = (*points[i+1]).x * (*points[i]).y;
-                temp += (lhs - rhs);
-            }
-            double area = abs(temp)/2.0;
-            return &area;
+        double area = abs(temp)/2.0;
+        return area;
     }
 };
 
@@ -90,6 +91,9 @@ int main () {
     quad->addPoints(quadPts);
 
     // FIXME: print out area of tri and area of quad
-    std::cout << "Area of tri: " << *(tri->area()) << std::endl;
-    std::cout << "Area of quad: " << *(quad->area()) << std::endl;
+    std::cout << "Area of tri: " << tri->area() << std::endl;
+    std::cout << "Area of quad: " << quad->area() << std::endl;
+
+    delete tri;
+    delete quad;
 }
